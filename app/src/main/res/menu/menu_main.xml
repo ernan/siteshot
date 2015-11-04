@@ -2,8 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
     <item
         android:id="@+id/menu_item_share"
-        android:title="Share"
-        android:actionProviderClass=
-            "android.widget.ShareActionProvider" />
+        android:actionProviderClass="android.widget.ShareActionProvider"
+        android:title="@string/action_share" />
 
 </menu>

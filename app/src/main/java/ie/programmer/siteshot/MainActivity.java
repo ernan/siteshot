@@ -14,6 +14,7 @@ import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -29,15 +30,19 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import de.greenrobot.event.util.AsyncExecutor;
+import de.greenrobot.event.util.AsyncExecutor.RunnableEx;
+import ie.programmer.siteshot.R.color;
+import ie.programmer.siteshot.R.id;
+import ie.programmer.siteshot.R.layout;
 
 public class MainActivity extends AppCompatActivity {
 
-    static final String api = "https://www.googleapis.com/pagespeedonline/v1/runPagespeed?screenshot=true&strategy=mobile&url=";
+    private static final String api = "https://www.googleapis.com/pagespeedonline/v1/runPagespeed?screenshot=true&strategy=mobile&url=";
     private ShareActionProvider mShareActionProvider;
 
-    public void showError(String errorMessage) {
-        if (null != errorMessage) {
-            Snackbar.make(this.getCurrentFocus(), errorMessage, Snackbar.LENGTH_LONG)
+    private void showError(String errorMessage) {
+        if (errorMessage != null) {
+            Snackbar.make(getCurrentFocus(), errorMessage, Snackbar.LENGTH_LONG)
                     .show();
         }
     }
@@ -45,29 +50,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        this.setContentView(layout.activity_main);
+        Toolbar toolbar = (Toolbar) this.findViewById(id.toolbar);
+        this.setSupportActionBar(toolbar);
 
-        final EditText tv = (EditText) findViewById(R.id.urlText);
-        final ImageView iv = (ImageView) findViewById(R.id.imageView);
+        final EditText tv = (EditText) this.findViewById(id.urlText);
+        final ImageView iv = (ImageView) this.findViewById(id.imageView);
 
-        final FloatingActionButton share = (FloatingActionButton) findViewById(R.id.share);
-        share.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary));
-        share.setOnClickListener(new View.OnClickListener() {
+        final FloatingActionButton share = (FloatingActionButton) this.findViewById(id.share);
+        share.setBackgroundTintList(this.getResources().getColorStateList(color.colorPrimary));
+        share.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                doShare();
+                MainActivity.this.doShare();
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setBackgroundTintList(getResources().getColorStateList(R.color.colorPrimary));
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = (FloatingActionButton) this.findViewById(id.fab);
+        fab.setBackgroundTintList(this.getResources().getColorStateList(color.colorPrimary));
+        fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 String url = String.valueOf(tv.getText());
-                queryMovieDb(url, new Response() {
+                MainActivity.this.queryMovieDb(url, new MainActivity.Response() {
                             @Override
                             public void handle(String response) {
                                 try {
@@ -77,12 +82,12 @@ public class MainActivity extends AppCompatActivity {
                                     data = data.replace("_", "/");
                                     data = data.replace("-", "+");
                                     byte[] decoded = Base64.decode(data, Base64.DEFAULT);
-                                    final String imagePath = getPictureFile();
+                                    final String imagePath = MainActivity.this.getPictureFile();
                                     BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(imagePath));
                                     bos.write(decoded);
                                     bos.flush();
                                     bos.close();
-                                    runOnUiThread(new Runnable() {
+                                    MainActivity.this.runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             try {
@@ -91,53 +96,49 @@ public class MainActivity extends AppCompatActivity {
                                                 fis.close();
                                                 share.setVisibility(View.VISIBLE);
                                             } catch (Exception ex) {
-                                                showError(ex.getMessage());
+                                                MainActivity.this.showError(ex.getMessage());
                                             }
                                         }
                                     });
                                 } catch (Exception ex) {
-                                    showError(ex.getMessage());
+                                    MainActivity.this.showError(ex.getMessage());
                                 }
                             }
                         },
-                        new ErrorResponse() {
+                        new MainActivity.ErrorResponse() {
                             @Override
-                            public void handle(final String errorMesage) {
-                                showError(errorMesage);
+                            public void handle(String errorMessage) {
+                                MainActivity.this.showError(errorMessage);
                             }
                         });
             }
         });
     }
 
-    String getPictureFile() {
-        return getFilesDir().getAbsolutePath() + "/" + "website.jpg";
+    private String getPictureFile() {
+        return this.getFilesDir().getAbsolutePath() + "/" + "website.jpg";
     }
 
-    public String processRequest(String request) {
+    private String processRequest(String request) {
         if (!(request.startsWith("http://") || request.startsWith("https://"))) {
-            request = "http://" + request;
+            return "http://" + request;
         }
         return request;
     }
 
-    public void queryMovieDb(final String request, final Response response, final ErrorResponse errorResponse) {
+    private void queryMovieDb(final String request, final MainActivity.Response response, final MainActivity.ErrorResponse errorResponse) {
         AsyncExecutor.create().execute(
-                new AsyncExecutor.RunnableEx() {
+                new RunnableEx() {
                     @Override
                     public void run() throws Exception {
-                        java.net.URL url = new URL(api + processRequest(request));
+                        URL url = new URL(MainActivity.api + MainActivity.this.processRequest(request));
                         try {
                             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                             conn.setRequestMethod("GET");
                             conn.setRequestProperty("Accept", "application/json");
-                            if (conn.getResponseCode() != 200) {
-                                showError("Failed : HTTP error code : "
-                                        + conn.getResponseCode());
-                                //    errorResponse.handle(parseError(conn.g));
-                            } else {
+                            if (conn.getResponseCode() == 200) {
                                 BufferedReader br = new BufferedReader(new InputStreamReader(
-                                        (conn.getInputStream())));
+                                        conn.getInputStream()));
                                 StringBuilder builder = new StringBuilder();
                                 String output;
                                 while ((output = br.readLine()) != null) {
@@ -145,6 +146,10 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 conn.disconnect();
                                 response.handle(builder.toString());
+                            } else {
+                                MainActivity.this.showError("Failed : HTTP error code : "
+                                        + conn.getResponseCode());
+                                //    errorResponse.handle(parseError(conn.g));
                             }
                         } catch (Exception e) {
                             errorResponse.handle(e.getMessage());
@@ -156,40 +161,40 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem menuItem = menu.findItem(R.id.menu_item_share);
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+        this.getMenuInflater().inflate(menu.menu_main, menu);
+        MenuItem menuItem = menu.findItem(id.menu_item_share);
+        this.mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
         return true;
     }
 
-    void doShare() {
+    private void doShare() {
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("image/jpeg");
-        share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + getPictureFile()));
-        startActivity(Intent.createChooser(share, "Share Image"));
+        share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + this.getPictureFile()));
+        this.startActivity(Intent.createChooser(share, "Share Image"));
     }
 
     private void setShareIntent(Intent shareIntent) {
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(shareIntent);
+        if (this.mShareActionProvider != null) {
+            this.mShareActionProvider.setShareIntent(shareIntent);
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.menu_item_share) {
-            doShare();
+        if (id == id.menu_item_share) {
+            this.doShare();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
     public interface ErrorResponse {
-        void handle(final String errorMessage);
+        void handle(String errorMessage);
     }
 
     public interface Response {
-        void handle(final String response);
+        void handle(String response);
     }
 }
