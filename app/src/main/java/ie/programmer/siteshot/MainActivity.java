@@ -6,15 +6,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -30,45 +25,33 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import de.greenrobot.event.util.AsyncExecutor;
-import de.greenrobot.event.util.AsyncExecutor.RunnableEx;
-import ie.programmer.siteshot.R.color;
-import ie.programmer.siteshot.R.id;
-import ie.programmer.siteshot.R.layout;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String api = "https://www.googleapis.com/pagespeedonline/v1/runPagespeed?screenshot=true&strategy=mobile&url=";
-    private ShareActionProvider mShareActionProvider;
-
-    private void showError(String errorMessage) {
-        if (errorMessage != null) {
-            Snackbar.make(getCurrentFocus(), errorMessage, Snackbar.LENGTH_LONG)
-                    .show();
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(layout.activity_main);
-        Toolbar toolbar = (Toolbar) this.findViewById(id.toolbar);
+        this.setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) this.findViewById(R.id.toolbar);
         this.setSupportActionBar(toolbar);
 
-        final EditText tv = (EditText) this.findViewById(id.urlText);
-        final ImageView iv = (ImageView) this.findViewById(id.imageView);
+        final EditText tv = (EditText) this.findViewById(R.id.urlText);
+        final ImageView iv = (ImageView) this.findViewById(R.id.imageView);
 
-        final FloatingActionButton share = (FloatingActionButton) this.findViewById(id.share);
-        share.setBackgroundTintList(this.getResources().getColorStateList(color.colorPrimary));
-        share.setOnClickListener(new OnClickListener() {
+        final FloatingActionButton share = (FloatingActionButton) this.findViewById(R.id.share);
+        share.setBackgroundTintList(this.getResources().getColorStateList(R.color.colorPrimary));
+        share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 MainActivity.this.doShare();
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) this.findViewById(id.fab);
-        fab.setBackgroundTintList(this.getResources().getColorStateList(color.colorPrimary));
-        fab.setOnClickListener(new OnClickListener() {
+        FloatingActionButton fab = (FloatingActionButton) this.findViewById(R.id.fab);
+        fab.setBackgroundTintList(this.getResources().getColorStateList(R.color.colorPrimary));
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String url = String.valueOf(tv.getText());
@@ -126,9 +109,16 @@ public class MainActivity extends AppCompatActivity {
         return request;
     }
 
+    private void showError(String errorMessage) {
+        if (errorMessage != null) {
+            Snackbar.make(this.getCurrentFocus(), errorMessage, Snackbar.LENGTH_LONG)
+                    .show();
+        }
+    }
+
     private void queryMovieDb(final String request, final MainActivity.Response response, final MainActivity.ErrorResponse errorResponse) {
         AsyncExecutor.create().execute(
-                new RunnableEx() {
+                new AsyncExecutor.RunnableEx() {
                     @Override
                     public void run() throws Exception {
                         URL url = new URL(MainActivity.api + MainActivity.this.processRequest(request));
@@ -159,35 +149,11 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        this.getMenuInflater().inflate(menu.menu_main, menu);
-        MenuItem menuItem = menu.findItem(id.menu_item_share);
-        this.mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
-        return true;
-    }
-
     private void doShare() {
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("image/jpeg");
         share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + this.getPictureFile()));
         this.startActivity(Intent.createChooser(share, "Share Image"));
-    }
-
-    private void setShareIntent(Intent shareIntent) {
-        if (this.mShareActionProvider != null) {
-            this.mShareActionProvider.setShareIntent(shareIntent);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == id.menu_item_share) {
-            this.doShare();
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public interface ErrorResponse {
