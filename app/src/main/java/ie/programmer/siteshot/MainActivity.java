@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
     private void doShare() {
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("image/jpeg");
-        share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + getPictureFile()));
+        share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(getPictureFile())));
         startActivity(Intent.createChooser(share, "Share Image"));
     }
 
