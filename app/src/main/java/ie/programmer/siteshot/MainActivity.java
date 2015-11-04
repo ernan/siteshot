@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -25,6 +26,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import de.greenrobot.event.util.AsyncExecutor;
+import de.greenrobot.event.util.AsyncExecutor.RunnableEx;
+import ie.programmer.siteshot.R.color;
+import ie.programmer.siteshot.R.id;
+import ie.programmer.siteshot.R.layout;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,29 +38,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) this.findViewById(R.id.toolbar);
-        this.setSupportActionBar(toolbar);
+        setContentView(layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(id.toolbar);
+        setSupportActionBar(toolbar);
 
-        final EditText tv = (EditText) this.findViewById(R.id.urlText);
-        final ImageView iv = (ImageView) this.findViewById(R.id.imageView);
+        final EditText tv = (EditText) findViewById(id.urlText);
+        final ImageView iv = (ImageView) findViewById(id.imageView);
 
-        final FloatingActionButton share = (FloatingActionButton) this.findViewById(R.id.share);
-        share.setBackgroundTintList(this.getResources().getColorStateList(R.color.colorPrimary));
-        share.setOnClickListener(new View.OnClickListener() {
+        final FloatingActionButton share = (FloatingActionButton) findViewById(id.share);
+        share.setBackgroundTintList(getResources().getColorStateList(color.colorPrimary));
+        share.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity.this.doShare();
+                doShare();
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) this.findViewById(R.id.fab);
-        fab.setBackgroundTintList(this.getResources().getColorStateList(R.color.colorPrimary));
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(id.fab);
+        fab.setBackgroundTintList(getResources().getColorStateList(color.colorPrimary));
+        fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 String url = String.valueOf(tv.getText());
-                MainActivity.this.queryMovieDb(url, new MainActivity.Response() {
+                queryMovieDb(url, new Response() {
                             @Override
                             public void handle(String response) {
                                 try {
@@ -65,12 +70,12 @@ public class MainActivity extends AppCompatActivity {
                                     data = data.replace("_", "/");
                                     data = data.replace("-", "+");
                                     byte[] decoded = Base64.decode(data, Base64.DEFAULT);
-                                    final String imagePath = MainActivity.this.getPictureFile();
+                                    final String imagePath = getPictureFile();
                                     BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(imagePath));
                                     bos.write(decoded);
                                     bos.flush();
                                     bos.close();
-                                    MainActivity.this.runOnUiThread(new Runnable() {
+                                    runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             try {
@@ -79,19 +84,19 @@ public class MainActivity extends AppCompatActivity {
                                                 fis.close();
                                                 share.setVisibility(View.VISIBLE);
                                             } catch (Exception ex) {
-                                                MainActivity.this.showError(ex.getMessage());
+                                                showError(ex.getMessage());
                                             }
                                         }
                                     });
                                 } catch (Exception ex) {
-                                    MainActivity.this.showError(ex.getMessage());
+                                    showError(ex.getMessage());
                                 }
                             }
                         },
-                        new MainActivity.ErrorResponse() {
+                        new ErrorResponse() {
                             @Override
                             public void handle(String errorMessage) {
-                                MainActivity.this.showError(errorMessage);
+                                showError(errorMessage);
                             }
                         });
             }
@@ -99,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String getPictureFile() {
-        return this.getFilesDir().getAbsolutePath() + "/" + "website.jpg";
+        return getFilesDir().getAbsolutePath() + "/" + "website.jpg";
     }
 
     private String processRequest(String request) {
@@ -111,17 +116,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void showError(String errorMessage) {
         if (errorMessage != null) {
-            Snackbar.make(this.getCurrentFocus(), errorMessage, Snackbar.LENGTH_LONG)
+            Snackbar.make(getCurrentFocus(), errorMessage, Snackbar.LENGTH_LONG)
                     .show();
         }
     }
 
-    private void queryMovieDb(final String request, final MainActivity.Response response, final MainActivity.ErrorResponse errorResponse) {
+    private void queryMovieDb(final String request, final Response response, final ErrorResponse errorResponse) {
         AsyncExecutor.create().execute(
-                new AsyncExecutor.RunnableEx() {
+                new RunnableEx() {
                     @Override
                     public void run() throws Exception {
-                        URL url = new URL(MainActivity.api + MainActivity.this.processRequest(request));
+                        URL url = new URL(api + processRequest(request));
                         try {
                             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                             conn.setRequestMethod("GET");
@@ -137,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                                 conn.disconnect();
                                 response.handle(builder.toString());
                             } else {
-                                MainActivity.this.showError("Failed : HTTP error code : "
+                                showError("Failed : HTTP error code : "
                                         + conn.getResponseCode());
                                 //    errorResponse.handle(parseError(conn.g));
                             }
@@ -152,8 +157,8 @@ public class MainActivity extends AppCompatActivity {
     private void doShare() {
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("image/jpeg");
-        share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + this.getPictureFile()));
-        this.startActivity(Intent.createChooser(share, "Share Image"));
+        share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + getPictureFile()));
+        startActivity(Intent.createChooser(share, "Share Image"));
     }
 
     public interface ErrorResponse {
