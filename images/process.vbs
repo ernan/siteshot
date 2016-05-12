@@ -228,11 +228,9 @@ Function getLauncherIconSizes(file)
 	Set getLauncherIconSizes = list
 End Function
 
-
-
 Function getIconSizes(file)
 	Dim list: Set list = CreateObject("Scripting.Dictionary")
-	list.Add "192", "drawable-xxhdpi"
+	list.Add "192", "drawable-xxxhdpi"
 	list.Add "142", "drawable-xxhdpi"
 	list.Add "96", "drawable-xhdpi"
 	list.Add "72", "drawable-hdpi"
@@ -242,7 +240,7 @@ End Function
 
 Function getMenuIconSizes(file)
 	Dim list: Set list = CreateObject("Scripting.Dictionary")
-	list.Add "96", "drawable-xxhdpi"
+	list.Add "96", "drawable-xxxhdpi"
 	list.Add "72", "drawable-xxhdpi"
 	list.Add "48", "drawable-xhdpi"
 	list.Add "36", "drawable-hdpi"
@@ -252,7 +250,7 @@ End Function
 
 Function getSmallIconSizes(file)
 	Dim list: Set list = CreateObject("Scripting.Dictionary")
-	list.Add "96", "drawable-xxhdpi"
+	list.Add "96", "drawable-xxxhdpi"
 	list.Add "72", "drawable-xxhdpi"
 	list.Add "48", "drawable-xhdpi"
 	list.Add "36", "drawable-hdpi"
@@ -262,22 +260,22 @@ End Function
 
 Function scaleRatios()
 	Dim list: Set list = CreateObject("Scripting.Dictionary")
-	list.Add    "drawable-sw360dp-mdpi"   , 1.125
-	list.Add    "drawable-sw360dp-hdpi"   , 1.6875
-	list.Add    "drawable-sw360dp-xhdpi"   , 2.25
-	list.Add    "drawable-sw360dp-xxhdpi"   , 3.375
-	list.Add    "drawable-sw480dp-mdpi"   , 1.5
-	list.Add    "drawable-sw480dp-hdpi"   , 2.25
-	list.Add    "drawable-sw480dp-xhdpi"   , 3
-	list.Add    "drawable-sw480dp-xxhdpi"   , 4.5
-	list.Add    "drawable-sw600dp-mdpi"   , 1.875
-	list.Add    "drawable-sw600dp-hdpi"   , 2.8125
-	list.Add    "drawable-sw600dp-xhdpi"   , 3.75	
-	list.Add    "drawable-sw600dp-xxhdpi"   , 5.625
-	list.Add    "drawable-sw720dp-mdpi"   , 2.25
-	list.Add    "drawable-sw720dp-hdpi"   , 3.375
-	list.Add    "drawable-sw720dp-xhdpi"   , 4.5
-	list.Add    "drawable-sw720dp-xxhdpi"   , 6.75
+	list.Add    "drawable-sw360dp-mdpi",    1.125
+	list.Add    "drawable-sw360dp-hdpi",    1.6875
+	list.Add    "drawable-sw360dp-xhdpi",   2.25
+	list.Add    "drawable-sw360dp-xxhdpi",  3.375
+	list.Add    "drawable-sw480dp-mdpi",    1.5
+	list.Add    "drawable-sw480dp-hdpi",    2.25
+	list.Add    "drawable-sw480dp-xhdpi",   3
+	list.Add    "drawable-sw480dp-xxhdpi",  4.5
+	list.Add    "drawable-sw600dp-mdpi",    1.875
+	list.Add    "drawable-sw600dp-hdpi",    2.8125
+	list.Add    "drawable-sw600dp-xhdpi",   3.75
+	list.Add    "drawable-sw600dp-xxhdpi",  5.625
+	list.Add    "drawable-sw720dp-mdpi",    2.25
+	list.Add    "drawable-sw720dp-hdpi",    3.375
+	list.Add    "drawable-sw720dp-xhdpi",   4.5
+	list.Add    "drawable-sw720dp-xxhdpi",  6.75
 	Set scaleRatios = list
 End Function
 
