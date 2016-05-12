@@ -30,6 +30,8 @@ import ie.programmer.siteshot.R.id;
 import ie.programmer.siteshot.R.layout;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String LAST_URL = "LAST_URL";
+
     ImageView iv;
     FloatingActionButton share;
     @Override
@@ -40,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         final EditText tv = (EditText) findViewById(id.urlText);
+        final DB db = new DB(getApplicationContext());
+        tv.setText(db.getString(LAST_URL, "http://programmer.ie"));
         tv.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -48,7 +52,9 @@ public class MainActivity extends AppCompatActivity {
                             && event.getAction() == KeyEvent.ACTION_DOWN) ||
                             (actionId == EditorInfo.IME_ACTION_DONE
                                     && event.getAction() == KeyEvent.ACTION_DOWN)) {
-                        EventBus.getDefault().post(String.valueOf(tv.getText()));
+                        String url = String.valueOf(tv.getText());
+                        db.putString(LAST_URL, url);
+                        EventBus.getDefault().post(url);
                     }
                 }
                 return true;
@@ -75,7 +81,9 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventBus.getDefault().post(String.valueOf(tv.getText()));
+                String url = String.valueOf(tv.getText());
+                db.putString(LAST_URL, url);
+                EventBus.getDefault().post(url);
             }
         });
         EventBus.getDefault().register(this);

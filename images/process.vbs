@@ -1,5 +1,3 @@
-''Const resPath = "D:\Users\Ernan\AndroidStudioProjects\TwosProject\Twos\src\main\res"
-
 Dim shell: Set shell = CreateObject("WScript.Shell")
 Dim fso: Set fso = CreateObject("Scripting.FileSystemObject")
 Dim folder: Set folder = fso.GetFolder(".")
@@ -40,29 +38,29 @@ End Function
 
 Function crush()
     For Each subfolder in resFolder.SubFolders
-  ''      Wscript.Echo subfolder.Path
+  ''      WScript.Echo subfolder.Path
 		For Each filePath in subfolder.Files
 			If InStr(UCase(filePath.Name), ".PNG") Then 
 				minuteCount = DateDiff("n", filePath.DateLastModified, startTime) 	
 				If minuteCount < 10 Then 
 					strCommand = "pngquant.exe " &  filePath & " --force -v --ext .png"
-					Wscript.Echo strCommand
+					WScript.Echo strCommand
 					Set objExecObject = shell.Exec(strCommand)
 					strText = ""
 					Do While Not objExecObject.StdOut.AtEndOfStream
 						strText = strText & objExecObject.StdOut.ReadLine()
 					Loop
 
-					Wscript.Echo strText
+					WScript.Echo strText
 
 					strCommand = "pngout.exe " & filePath
-					Wscript.Echo strCommand
+					WScript.Echo strCommand
 					Set objExecObject = shell.Exec(strCommand)
 					strText = ""
 					Do While Not objExecObject.StdOut.AtEndOfStream
 						strText = strText & objExecObject.StdOut.ReadLine()
 					Loop
-					Wscript.Echo strText
+					WScript.Echo strText
 				End If
 			End If
 		Next
@@ -116,17 +114,17 @@ End Function
 
 Function process(file, width, height, directory)
 	strCommand = "process_files.bat " & fso.GetBaseName(file) & ", " & width & ", " & height & ", " & resFolder & "\" & directory
-    Wscript.Echo(strCommand)
+    WScript.Echo(strCommand)
 	shell.run strCommand, 0, True
 End Function
 
 Function process2(file, width, height, directory)
 	directoryPath = resPath & "\" & directory
 	strCommand = """C:\Program Files\inkscape\inkscape.exe"" " & file.Path & " -z -e -w " & width & " -h " & height & " --export-dpi=1200 --export-area-drawing --export-png=" & directoryPath & "\" & file.Name
-    Wscript.Echo(strCommand)
+    WScript.Echo(strCommand)
 	shell.run strCommand, 0, True
 	strCommand = "mogrify   " & file.Path & " -background none -gravity Center -extent  " & width & "x" & height & " " & file.Path
-    Wscript.Echo(strCommand)
+    WScript.Echo(strCommand)
 	shell.run strCommand, 0, True
 End Function
 
@@ -134,44 +132,44 @@ Function getProcessType(fileItem)
 	processType = "NORMAL"
 	strExtension = fso.getExtensionName(fileItem)
 	If InStr(UCase(fileItem.Name), ".SVG") Then 	
-		Wscript.Echo("Normal...." & fileItem.Name)
-		Wscript.Echo(fileItem.Name)
+		WScript.Echo("Normal...." & fileItem.Name)
+		WScript.Echo(fileItem.Name)
 	End IF
 	If InStr(UCase(fileItem.Name), "IC_LAUNCHER") Then 	
 		processType = "LAUNCHER"
-		Wscript.Echo(fileItem.Name)
+		WScript.Echo(fileItem.Name)
 	End IF
 	If InStr(UCase(fileItem.Name), "_HALF.SVG") Then 	
 		processType = "HALF"
-		Wscript.Echo("Half size file...." & fileItem.Name)
+		WScript.Echo("Half size file...." & fileItem.Name)
 	End IF
 	If InStr(UCase(fileItem.Name), "_HALF_SELECTED.SVG") Then 	
 		processType = "HALF"
-		Wscript.Echo("Half size file...." & fileItem.Name)
+		WScript.Echo("Half size file...." & fileItem.Name)
 	End IF
 	If InStr(UCase(fileItem.Name), "_QUARTER.SVG") Then 	
 		processType = "QUARTER"
-		Wscript.Echo("QUARTER size file...." & fileItem.Name)
+		WScript.Echo("QUARTER size file...." & fileItem.Name)
 	End IF
 	If InStr(UCase(fileItem.Name), "_FIFTH.SVG") Then 	
 		processType = "FIFTH"
-		Wscript.Echo("FIFTH size file...." & fileItem.Name)
+		WScript.Echo("FIFTH size file...." & fileItem.Name)
 	End IF
 	If InStr(UCase(fileItem.Name), "_QUARTER_SELECTED.SVG") Then 	
 		processType = "QUARTER"
-		Wscript.Echo("QUARTER size file...." & fileItem.Name)
+		WScript.Echo("QUARTER size file...." & fileItem.Name)
 	End IF
 	If InStr(UCase(fileItem.Name), "IC_MENU_") Then 	
 		processType = "MENU"
-		Wscript.Echo("MENU size file...." & fileItem.Name)
+		WScript.Echo("MENU size file...." & fileItem.Name)
 	End IF
 	If InStr(UCase(fileItem.Name), "_SMALL.SVG") Then 	
 		processType = "SMALL"
-		Wscript.Echo("SMALL size file...." & fileItem.Name)
+		WScript.Echo("SMALL size file...." & fileItem.Name)
 	End IF
 	If InStr(UCase(fileItem.Name), "_TABLET.SVG") Then 	
 		processType = "TABLET"
-		Wscript.Echo("TABLET size file...." & fileItem.Name)
+		WScript.Echo("TABLET size file...." & fileItem.Name)
 	End IF
 	getProcessType = processType
 End Function
@@ -222,7 +220,7 @@ End Function
 
 Function getLauncherIconSizes(file)
 	Dim list: Set list = CreateObject("Scripting.Dictionary")
-	list.Add "192", "mipmap-xxhdpi"
+	list.Add "192", "mipmap-xxxhdpi"
 	list.Add "142", "mipmap-xxhdpi"
 	list.Add "96", "mipmap-xhdpi"
 	list.Add "72", "mipmap-hdpi"

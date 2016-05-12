@@ -20,6 +20,7 @@ public class DB {
     private static final String IMAGE_DATA_DIRECTORY = "ImageCache";
     private static final String LAST_SEARCH_TIME = "LAST_SEARCH_TIME";
 
+
     Context mContext;
     SharedPreferences mSharedPreferences;
     File mFolder = null;
