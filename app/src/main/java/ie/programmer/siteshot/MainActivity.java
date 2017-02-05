@@ -29,8 +29,9 @@ import ie.programmer.siteshot.R.color;
 import ie.programmer.siteshot.R.id;
 import ie.programmer.siteshot.R.layout;
 
+import static ie.programmer.siteshot.Util.LAST_URL;
+
 public class MainActivity extends AppCompatActivity {
-    private static final String LAST_URL = "LAST_URL";
 
     ImageView iv;
     FloatingActionButton share;

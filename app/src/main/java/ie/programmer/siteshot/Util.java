@@ -17,6 +17,7 @@ import de.greenrobot.event.util.AsyncExecutor;
 
 public class Util {
     public static final String API = "https://www.googleapis.com/pagespeedonline/v1/runPagespeed?screenshot=true&strategy=mobile&url=";
+    public static final String LAST_URL = "LAST_URL";
 
     public static String writeToExternal(Context context, String filename){
         String newFileName = null;
